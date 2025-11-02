@@ -1,18 +1,23 @@
 from openai import OpenAI
 import pandas as pd
 from tqdm import tqdm
+from dotenv import load_dotenv
+import os
+load_dotenv(override=True)
 
-client = OpenAI(api_key="OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-df = pd.read_csv("esnli_sample.csv")
+df = pd.read_excel("data/esnli_selected.xlsx")
 
 def translate_text(text):
     if pd.isna(text):
         return ""
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4.1-mini",
         messages=[
-            {"role": "system", "content": "You are a professional translator. Translate the text from English to German accurately and naturally."},
+            {"role": "system", "content": "You are a professional English-German translator for Natural Language Inference (NLI) data."
+                                          "Translate each field into fluent, grammatically correct German "
+                                          "while preserving meaning, logic, and tone. Keep numbers, entities, and structure unchanged."},
             {"role": "user", "content": text}
         ]
     )
@@ -23,4 +28,4 @@ df["Sentence1_de"] = df["Sentence1"].progress_apply(translate_text)
 df["Sentence2_de"] = df["Sentence2"].progress_apply(translate_text)
 df["Explanation_1_de"] = df["Explanation_1"].progress_apply(translate_text)
 
-df.to_csv("esnli_de_translated.csv", index=False)
+df.to_excel("esnli_de_translated.xlsx", index=False)
