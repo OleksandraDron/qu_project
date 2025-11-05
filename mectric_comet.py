@@ -3,7 +3,7 @@ os.environ["HF_HUB_USE_SYMLINKS_DEFAULT"] = "0"
 import pandas as pd
 from comet import download_model, load_from_checkpoint
 
-df = pd.read_excel("data/esnli_de_gpt4_1_mini.xlsx")
+df = pd.read_excel("data/esnli_de_gpt4_1.xlsx")
 
 parts = []
 if {"Sentence1","Sentence1_de"}.issubset(df.columns):
@@ -37,9 +37,9 @@ system_score, seg_scores = parse_comet_output(out)
 # if seg_scores:
 #     df_long = df_long.copy()
 #     df_long["COMET_QE"] = seg_scores
-    # df_long.rename(columns={"src":"original_en","mt":"translation_de"}).to_csv(
-    #     "comet_qe_segment_scores.csv", index=False, encoding="utf-8"
-    # )
+#     df_long.rename(columns={"src":"original_en","mt":"translation_de"}).to_csv(
+#         "comet_qe_segment_scores.csv", index=False, encoding="utf-8"
+#     )
 
 if seg_scores:
     for name, group in df_long.groupby("field"):

@@ -7,15 +7,15 @@ load_dotenv(override=True)
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-df = pd.read_excel("data/esnli_de_gpt4_1_mini.xlsx")
+df = pd.read_excel("data/esnli_de_gpt4o_200.xlsx")
 
 def back_translate_text(text):
     if pd.isna(text) or not str(text).strip():
         return ""
     response = client.chat.completions.create(
-        model="gpt-4.1",
+        model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are a professional German-English translator for Natural Language Inference (NLI) data."
+            {"role": "system", "content": "You are a professional German-English translator."
                                           "Translate each field into fluent, grammatically correct English "
                                           "while preserving meaning, logic, and tone. Keep numbers, entities, and structure unchanged."},
             {"role": "user", "content": text}
@@ -28,8 +28,6 @@ tqdm.pandas(desc="Back-translating Sentence1")
 df["Sentence1_back_en"] = df["Sentence1_de"].progress_apply(back_translate_text)
 tqdm.pandas(desc="Back-translating Sentence2")
 df["Sentence2_back_en"] = df["Sentence2_de"].progress_apply(back_translate_text)
-tqdm.pandas(desc="Back-translating Explanation_1")
-df["Explanation_1_back_en"] = df["Explanation_1_de"].progress_apply(back_translate_text)
 
-df.to_excel("esnli_en_gpt4_1.xlsx", index=False)
+df.to_excel("esnli_en_gpt4o_200.xlsx", index=False)
 
